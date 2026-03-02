@@ -1,44 +1,28 @@
-import dorm1 from "../assets/dorm1.jpg";
-import test4 from "../assets/test4.jpg";
+
 import map from "../assets/map.png";
 import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
-const dormData = [
-  {
-    id: 1,
-    image: dorm1,
-    name: "เอเอ เรสซิเด้นซ์ ศรีราชา",
-    price: 5100,
-    type: "ห้องแอร์",
-    status: true,
-  },
-  {
-    id: 2,
-    image: test4,
-    name: "ทรีโอ เรสซิเด้นซ์ ศรีราชา",
-    price: 6000,
-    type: "ห้องพัดลม",
-    status: true,
-  },
-];
-const RecommendDorm = () => {
+
+const RecommendDorm = ({dormData}) => {
   return (
     <>
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-semibold">หอพักแนะนำรอบม.</h1>
 
         <div className="flex flex-col gap-6 items-center ">
-          {dormData.map((dorm) => (
+          {dormData?.map((dorm) => (
             <>
-              <Link to="/detail"
+              <Link 
+              key={dorm.id}
+              to={`/detail/${dorm.id}`}
                 className="w-full flex justify-between  p-4 bg-[#40916C] rounded-xl"
-                key={dorm.id}
+                
               >
                 <div className="flex gap-6">
                   <img
-                    src={dorm.image}
+                    src={dorm.imageUrl}
                     alt={dorm.name}
-                    className="w-90 h-50 object-cover"
+                    className="w-90 h-50 object-cotain"
                   />
                   <div className="flex mt-4 flex-col space-y-2">
                     <p className="text-xl font-semibold text-white">
@@ -71,11 +55,7 @@ const RecommendDorm = () => {
                     ฿{dorm.price} / เดือน
                   </p>
 
-                  <p
-                    className={`text-md font-semibold ${dorm.status ? "text-white " : "text-red-500"}`}
-                  >
-                    {dorm.status ? "ว่าง" : "FULL"}
-                  </p>
+
                 </div>
               </Link>
             </>

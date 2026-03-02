@@ -8,9 +8,11 @@ import Navbar from "../components/Navbar";
 import DormSlide from "../components/DormSlide";
 import { LuMousePointerClick } from "react-icons/lu";
 import { FaPhoneVolume } from "react-icons/fa6";
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import axios from "axios"
 const dormData = [
   {
-    id: 1,
     image:[
         dorm1,
         dorm2,
@@ -18,12 +20,6 @@ const dormData = [
         dorm4,
         dorm5,
     ],
-
-    name: "ทรีโอ เรสซิเดนซ์ ศรีราชา",
-    address: "ซ.ทรีโอ ถ.สุขุมวิท ทุ่งสุขลา ศรีราชา ชลบุรี",
-    distance: "ห่างจาก มหาวิทยาลัยเกษตรศาสตร์ ศรีราชา 1.5 กิโลเมตร",
-    phone: "0874368901",
-    price: "6,000",
     roomTypes: [
       {
         type: "Standard room",
@@ -52,7 +48,24 @@ const dormData = [
   },
 ];
 const DormDetail = () => {
-    const dorm = dormData[0];
+  const { id } = useParams();
+  const [dorm, setDorm] = useState(null);
+
+useEffect(() => {
+  const fetchDorm = async () => {
+    const res = await axios.get(`http://localhost:8080/dorms/${id}`);
+    const mockExtra = dormData[0];
+
+    setDorm({
+      ...res.data,
+      ...mockExtra
+    });
+    console.log(res.data)
+  };
+
+  fetchDorm();
+}, [id]);
+if (!dorm) return <div>Loading...</div>;
   return (
     <>
      <div className="flex flex-col min-h-screen bg-[#F0F0F0] font-sans">
@@ -66,19 +79,19 @@ const DormDetail = () => {
               <h1 className="text-3xl font-bold text-black">{dorm.name}</h1>
               <div className="flex gap-2 items-center">
               <p>{dorm.address}</p>
-<a className="flex gap-4 justify-center items-center bg-white w-fit rounded-xl px-2 py-1">
+<div className="flex gap-4 justify-center items-center bg-white w-fit rounded-xl px-2 py-1">
                     <p className="text-md font-semibold">ที่ตั้ง</p>
                     <img src={map} alt="google map" className="w-10 h-10 object-cover"/>
-                </a>
+                </div>
 
               </div>
-              <p className="text-sm ">{dorm.distance}</p>
+              <p className="text-sm ">{dorm.district}</p>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <div className="bg-white rounded-full px-6 py-2 flex items-center gap-2 font-bold shadow-sm w-fit">
-              <span>   <FaPhoneVolume size={20} /></span> {dorm.phone}
+              <span>   <FaPhoneVolume size={20} /></span> {dorm.province}
             </div>
             <div className="bg-white rounded-full px-6 py-2 flex items-center font-bold shadow-sm w-fit">
               ค่าเช่า : <span className="ml-2 text-lg">{dorm.price} บาท/เดือน</span>
@@ -87,7 +100,7 @@ const DormDetail = () => {
           </div>
           <div className="flex flex-col space-y-4 mt-4">
 
-          <img src={dorm1} alt={dorm.name} className="w-full h-100 object-cover" />
+          <img src={dorm.imageUrl} alt={dorm.name} className="w-full h-100 object-cotain" />
           <div className="flex gap-4">
               <img src={dorm1} alt={dorm.name} className="w-full h-50 object-cover" />
                 <img src={dorm2} alt={dorm.name} className="w-full h-50 object-cover" />
@@ -117,12 +130,12 @@ const DormDetail = () => {
                 </tr>
               </thead>
               <tbody className="bg-[#D9E9CF]">
-                {dorm.roomTypes.map((room, index) => (
+                {dorm.roomTypes?.map((room, index) => (
                   <tr key={index} className="border-b border-green-100 last:border-0">
                     <td className="p-3 font-semibold">{room.type}</td>
                     <td className="p-3">{room.format}</td>
                     <td className="p-3">{room.size}</td>
-                    <td className="p-3">{room.priceMonth}</td>
+                    <td className="p-3">{dorm.price}</td>
                     <td className="p-3">{room.water}</td>
                     <td className="p-3">{room.electric}</td>
                     <td className="p-3 text-center text-green-700 font-bold">{room.status}</td>
@@ -139,7 +152,7 @@ const DormDetail = () => {
           <div className="bg-[#D9E9CF] p-6 rounded-xl">
             <h2 className="text-2xl font-bold mb-4">สิ่งอำนวยความสะดวก</h2>
             <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-gray-800">
-              {dorm.facilities.map((item, index) => (
+              {dorm.facilities?.map((item, index) => (
                 <div key={index} className="flex items-center">
                    • {item}
                 </div>
